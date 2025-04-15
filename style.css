@@ -3,6 +3,10 @@ body {
     margin: 20px;
 }
 
+h1 {
+    color: purple;
+}
+
 input, button {
     padding: 10px;
     font-size: 1em;
