@@ -6,14 +6,15 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout du code
         uses: actions/checkout@v3
-
       - name: Installer html5validator
         run: |
           sudo apt-get install python3-pip -y
@@ -21,7 +22,6 @@ jobs:
       - name: Vérifier le HTML
         run: |
           html5validator --root .
-
       - name: Linter CSS
         uses: actions/setup-node@v3
         with:
@@ -30,3 +30,16 @@ jobs:
           npm install stylelint stylelint-config-standard --save-dev
           echo '{ "extends": "stylelint-config-standard" }' > .stylelintrc.json
           npx stylelint "**/*.css"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .
+          token: ${{ secrets.GITHUB_TOKEN }}
